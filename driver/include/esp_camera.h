@@ -74,7 +74,11 @@
 extern "C" {
 #endif
 
-#define CONFIG_OV2640_SUPPORT 1
+// PIPEBOTS CHANGES
+// To get around kconfig file not being picked up.
+#define CONFIG_OV2640_SUPPORT (1)
+#define CONFIG_CAMERA_NO_AFFINITY (1)
+// PIPEBOTS END CHANGES
 
 /**
  * @brief Configuration structure for camera initialization
