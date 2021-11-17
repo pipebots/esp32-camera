@@ -219,7 +219,7 @@ static int skip_frame()
     return 0;
 
 timeout:
-    ESP_LOGE(TAG, "Timeout waiting for VSYNC");
+    ESP_LOGE(TAG, "%s Timeout waiting for VSYNC", __func_);
     return -1;
 }
 
@@ -513,9 +513,10 @@ static int i2s_run()
     int64_t st_t = esp_timer_get_time();
     while (_gpio_get_level(s_state->config.pin_vsync) != 0) {
         if((esp_timer_get_time() - st_t) > 1000000LL){
-            ESP_LOGE(TAG, "Timeout waiting for VSYNC");
+            ESP_LOGE(TAG,  "%s Timeout waiting for VSYNC", __func_);
             return -1;
         }
+        vTaskDelay(2);
     }
     ESP_LOGV(TAG, "Got VSYNC");
     i2s_start_bus();
