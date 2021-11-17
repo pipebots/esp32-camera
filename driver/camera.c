@@ -976,7 +976,7 @@ esp_err_t camera_probe(const camera_config_t* config, camera_model_t* out_camera
       ESP_LOGD(TAG, "Initializing SSCB");
       SCCB_Init(config->pin_sscb_sda, config->pin_sscb_scl);
     }
-	
+
     if(config->pin_pwdn >= 0) {
         ESP_LOGD(TAG, "Resetting camera by power down line");
         gpio_config_t conf = { 0 };
@@ -1012,7 +1012,7 @@ esp_err_t camera_probe(const camera_config_t* config, camera_model_t* out_camera
         camera_disable_out_clock();
         return ESP_ERR_CAMERA_NOT_DETECTED;
     }
-    
+
     //slv_addr = 0x30;
     ESP_LOGD(TAG, "Detected camera at address=0x%02x", slv_addr);
     sensor_id_t* id = &s_state->sensor.id;
@@ -1033,7 +1033,7 @@ esp_err_t camera_probe(const camera_config_t* config, camera_model_t* out_camera
         ESP_LOGD(TAG, "Resetting NT99141");
         SCCB_Write16(0x2a, 0x3008, 0x01);//bank sensor
     }
-#endif 
+#endif
 
     s_state->sensor.slv_addr = slv_addr;
     s_state->sensor.xclk_freq_hz = config->xclk_freq_hz;
@@ -1053,7 +1053,7 @@ esp_err_t camera_probe(const camera_config_t* config, camera_model_t* out_camera
         {
             ESP_LOGE(TAG, "NT99141: only XCLK under 10MHz is supported, and XCLK is now set to 10M");
             s_state->sensor.xclk_freq_hz = 10000000;
-        }    
+        }
     } else {
 #endif
         id->PID = SCCB_Read(s_state->sensor.slv_addr, REG_PID);
@@ -1457,6 +1457,8 @@ esp_err_t esp_camera_deinit()
 camera_fb_t* esp_camera_fb_get()
 {
     if (s_state == NULL) {
+        // AJB
+        ESP_LOGE(TAG, "s_state == NULL");
         return NULL;
     }
     if(!I2S0.conf.rx_start) {
@@ -1464,6 +1466,7 @@ camera_fb_t* esp_camera_fb_get()
             ESP_LOGD(TAG, "i2s_run");
         }
         if (i2s_run() != 0) {
+            ESP_LOGE(TAG, "i2s_run() != 0");
             return NULL;
         }
     }
@@ -1474,6 +1477,7 @@ camera_fb_t* esp_camera_fb_get()
             ESP_LOGE(TAG, "Failed to get the frame on time!");
             return NULL;
         }
+        ESP_LOGE(TAG, "s_state->config.fb_count == 1");
         return (camera_fb_t*)s_state->fb;
     }
     camera_fb_int_t * fb = NULL;
@@ -1484,6 +1488,7 @@ camera_fb_t* esp_camera_fb_get()
             return NULL;
         }
     }
+    ESP_LOGE(TAG, "esp_camera_fb_get end");
     return (camera_fb_t*)fb;
 }
 
@@ -1503,7 +1508,7 @@ sensor_t * esp_camera_sensor_get()
     return &s_state->sensor;
 }
 
-esp_err_t esp_camera_save_to_nvs(const char *key) 
+esp_err_t esp_camera_save_to_nvs(const char *key)
 {
 #if ESP_IDF_VERSION_MAJOR > 3
     nvs_handle_t handle;
@@ -1511,7 +1516,7 @@ esp_err_t esp_camera_save_to_nvs(const char *key)
     nvs_handle handle;
 #endif
     esp_err_t ret = nvs_open(key,NVS_READWRITE,&handle);
-    
+
     if (ret == ESP_OK) {
         sensor_t *s = esp_camera_sensor_get();
         if (s != NULL) {
@@ -1522,7 +1527,7 @@ esp_err_t esp_camera_save_to_nvs(const char *key)
             }
             return ret;
         } else {
-            return ESP_ERR_CAMERA_NOT_DETECTED; 
+            return ESP_ERR_CAMERA_NOT_DETECTED;
         }
         nvs_close(handle);
         return ret;
@@ -1531,7 +1536,7 @@ esp_err_t esp_camera_save_to_nvs(const char *key)
     }
 }
 
-esp_err_t esp_camera_load_from_nvs(const char *key) 
+esp_err_t esp_camera_load_from_nvs(const char *key)
 {
 #if ESP_IDF_VERSION_MAJOR > 3
     nvs_handle_t handle;
@@ -1541,7 +1546,7 @@ esp_err_t esp_camera_load_from_nvs(const char *key)
   uint8_t pf;
 
   esp_err_t ret = nvs_open(key,NVS_READWRITE,&handle);
-  
+
   if (ret == ESP_OK) {
       sensor_t *s = esp_camera_sensor_get();
       camera_status_t st;
@@ -1562,7 +1567,7 @@ esp_err_t esp_camera_load_from_nvs(const char *key)
             s->set_denoise(s,st.denoise);
             s->set_exposure_ctrl(s,st.aec);
             s->set_framesize(s,st.framesize);
-            s->set_gain_ctrl(s,st.agc);          
+            s->set_gain_ctrl(s,st.agc);
             s->set_gainceiling(s,st.gainceiling);
             s->set_hmirror(s,st.hmirror);
             s->set_lenc(s,st.lenc);
@@ -1575,7 +1580,7 @@ esp_err_t esp_camera_load_from_nvs(const char *key)
             s->set_wb_mode(s,st.wb_mode);
             s->set_whitebal(s,st.awb);
             s->set_wpc(s,st.wpc);
-        }  
+        }
         ret = nvs_get_u8(handle,CAMERA_PIXFORMAT_NVS_KEY,&pf);
         if (ret == ESP_OK) {
           s->set_pixformat(s,pf);
