@@ -1468,7 +1468,7 @@ camera_fb_t* esp_camera_fb_get()
             ESP_LOGD(TAG, "i2s_run");
         }
         if (i2s_run() != 0) {
-            ESP_LOGV(TAG, "i2s_run() != 0");
+            ESP_LOGD(TAG, "i2s_run() != 0");
             return NULL;
         }
     }
@@ -1493,7 +1493,7 @@ camera_fb_t* esp_camera_fb_get()
         i2s_stop(&need_yield);
         ESP_LOGE(TAG, "Failed to get the frame on time!");
     }
-    ESP_LOGE(TAG, "esp_camera_fb_get end");
+    ESP_LOGV(TAG, "esp_camera_fb_get end");
     return (camera_fb_t*)fb;
 }
 
