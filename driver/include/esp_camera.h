@@ -74,12 +74,6 @@
 extern "C" {
 #endif
 
-// PIPEBOTS CHANGES
-// To get around kconfig file not being picked up.
-#define CONFIG_OV2640_SUPPORT (1)
-#define CONFIG_CAMERA_NO_AFFINITY (1)
-// PIPEBOTS END CHANGES
-
 /**
  * @brief Configuration structure for camera initialization
  */
@@ -130,6 +124,12 @@ typedef struct {
 #define ESP_ERR_CAMERA_FAILED_TO_SET_FRAME_SIZE (ESP_ERR_CAMERA_BASE + 2)
 #define ESP_ERR_CAMERA_FAILED_TO_SET_OUT_FORMAT (ESP_ERR_CAMERA_BASE + 3)
 #define ESP_ERR_CAMERA_NOT_SUPPORTED            (ESP_ERR_CAMERA_BASE + 4)
+
+// PIPEBOTS CHANGES
+// To get around kconfig file not being picked up.
+#define CONFIG_OV2640_SUPPORT (1)
+#define CONFIG_CAMERA_CORE1 (1)
+// PIPEBOTS END CHANGES
 
 /**
  * @brief Initialize the camera driver
